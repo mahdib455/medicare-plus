@@ -1,0 +1,114 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+
+class AuthController extends Controller
+{
+    /**
+     * Show the login form.
+     */
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
+    /**
+     * Handle login request with role-based redirection.
+     */
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
+        ]);
+
+        // Find user by email
+        $user = User::where('email', $request->email)->first();
+
+        // Simple password comparison (no hashing)
+        if ($user && $user->password === $request->password) {
+            // Login the user manually
+            Auth::login($user);
+
+            // Regenerate session to prevent session fixation
+            $request->session()->regenerate();
+
+            // Role-based redirection
+            if ($user->isDoctor()) {
+                return redirect()->intended('/doctor/dashboard');
+            } elseif ($user->isPatient()) {
+                return redirect()->intended('/patient/dashboard');
+            }
+
+            // Default fallback (shouldn't happen with proper role validation)
+            return redirect()->intended('/dashboard');
+        }
+
+        throw ValidationException::withMessages([
+            'email' => ['Les informations d\'identification fournies ne correspondent pas à nos enregistrements.'],
+        ]);
+    }
+
+    /**
+     * Handle logout request.
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
+    }
+
+    /**
+     * Show the registration form.
+     */
+    public function showRegistrationForm()
+    {
+        return view('auth.register');
+    }
+
+    /**
+     * Handle registration request.
+     */
+    public function register(Request $request)
+    {
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:500',
+            'role' => 'required|in:doctor,patient',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'role' => $request->role,
+            'password' => $request->password, // Pas de hachage
+        ]);
+
+        Auth::login($user);
+
+        // Role-based redirection after registration
+        if ($user->isDoctor()) {
+            return redirect('/doctor/dashboard');
+        } elseif ($user->isPatient()) {
+            return redirect('/patient/dashboard');
+        }
+
+        return redirect('/dashboard');
+    }
+}
