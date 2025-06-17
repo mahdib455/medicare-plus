@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Review;
-use App\Models\Consultation;
+use App\Models\DoctorReview;
 use App\Models\Doctor;
 use App\Models\Patient;
+use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
-class ReviewController extends Controller
+class DoctorReviewController extends Controller
 {
     /**
-     * Store a new review
+     * Store a new doctor review
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -43,37 +43,7 @@ class ReviewController extends Controller
             }
 
             // Validate input
-            $validatedData = $request->validate(Review::validationRules());
-
-            // Get consultation and verify ownership
-            $consultation = Consultation::with('appointment')->find($request->consultation_id);
-
-            if (!$consultation) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Consultation not found'
-                ], 404);
-            }
-
-            // Ensure patient owns the consultation
-            if ($consultation->appointment->patient_id !== $patient->id) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Unauthorized: You can only review your own consultations'
-                ], 403);
-            }
-
-            // Check for duplicate review on same consultation
-            $existingReview = Review::where('consultation_id', $request->consultation_id)
-                ->where('patient_id', $patient->id)
-                ->first();
-
-            if ($existingReview) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'You have already reviewed this consultation'
-                ], 409);
-            }
+            $validatedData = $request->validate(DoctorReview::validationRules());
 
             // Verify doctor exists
             $doctor = Doctor::find($request->doctor_id);
@@ -84,27 +54,49 @@ class ReviewController extends Controller
                 ], 404);
             }
 
+            // Check if patient has had an appointment with this doctor
+            $hasAppointment = Appointment::where('patient_id', $patient->id)
+                ->where('doctor_id', $doctor->id)
+                ->exists();
+
+            if (!$hasAppointment) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'You can only review doctors you have had appointments with'
+                ], 403);
+            }
+
+            // Check for duplicate review
+            $existingReview = DoctorReview::where('doctor_id', $request->doctor_id)
+                ->where('patient_id', $patient->id)
+                ->first();
+
+            if ($existingReview) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'You have already reviewed this doctor'
+                ], 409);
+            }
+
             // Create the review
-            $review = Review::create([
-                'consultation_id' => $request->consultation_id,
+            $review = DoctorReview::create([
                 'doctor_id' => $request->doctor_id,
                 'patient_id' => $patient->id,
                 'rating' => $request->rating,
                 'comment' => $request->comment,
                 'is_anonymous' => $request->is_anonymous ?? false,
-                'status' => 'active' // Default status
+                'status' => 'active'
             ]);
 
             // Load relationships for response
-            $review->load(['consultation', 'doctor.user', 'patient.user']);
+            $review->load(['doctor.user', 'patient.user']);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Review submitted successfully',
+                'message' => 'Doctor review submitted successfully',
                 'data' => [
                     'review' => [
                         'id' => $review->id,
-                        'consultation_id' => $review->consultation_id,
                         'doctor_id' => $review->doctor_id,
                         'patient_id' => $review->patient_id,
                         'rating' => $review->rating,
@@ -118,11 +110,6 @@ class ReviewController extends Controller
                             'id' => $review->doctor->id,
                             'name' => $review->doctor->user->full_name,
                             'speciality' => $review->doctor->speciality ?? 'General Practitioner'
-                        ],
-                        'consultation' => [
-                            'id' => $review->consultation->id,
-                            'date' => $review->consultation->consultation_date->format('Y-m-d H:i:s'),
-                            'diagnosis' => $review->consultation->diagnosis
                         ]
                     ]
                 ]
@@ -137,7 +124,7 @@ class ReviewController extends Controller
 
         } catch (\Exception $e) {
             // Log the error for debugging
-            \Log::error('Review creation failed: ' . $e->getMessage(), [
+            \Log::error('Doctor review creation failed: ' . $e->getMessage(), [
                 'user_id' => $user->id ?? null,
                 'request_data' => $request->all(),
                 'trace' => $e->getTraceAsString()
@@ -151,12 +138,12 @@ class ReviewController extends Controller
     }
 
     /**
-     * Get consultations without reviews for the authenticated patient
+     * Get doctors that the authenticated patient can review
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getUnreviewedConsultations(Request $request)
+    public function getDoctorsToReview(Request $request)
     {
         try {
             $user = Auth::user();
@@ -177,52 +164,48 @@ class ReviewController extends Controller
                 ], 404);
             }
 
-            // Get consultations that haven't been reviewed yet
-            $consultations = Consultation::whereHas('appointment', function($query) use ($patient) {
+            // Get doctors that the patient has had appointments with but hasn't reviewed
+            $doctors = Doctor::whereHas('appointments', function($query) use ($patient) {
                     $query->where('patient_id', $patient->id);
                 })
-                ->whereDoesntHave('reviews', function($query) use ($patient) {
+                ->whereDoesntHave('doctorReviews', function($query) use ($patient) {
                     $query->where('patient_id', $patient->id);
                 })
-                ->with(['appointment.doctor.user'])
-                ->orderBy('consultation_date', 'desc')
+                ->with(['user', 'appointments' => function($query) use ($patient) {
+                    $query->where('patient_id', $patient->id)
+                          ->orderBy('appointment_date', 'desc')
+                          ->limit(1);
+                }])
                 ->get()
-                ->map(function($consultation) {
+                ->map(function($doctor) {
+                    $lastAppointment = $doctor->appointments->first();
                     return [
-                        'id' => $consultation->id,
-                        'consultation_date' => $consultation->consultation_date->format('Y-m-d'),
-                        'consultation_time' => $consultation->consultation_date->format('H:i'),
-                        'formatted_date' => $consultation->consultation_date->format('M d, Y at H:i'),
-                        'diagnosis' => $consultation->diagnosis,
-                        'treatment' => $consultation->treatment,
-                        'notes' => $consultation->notes,
-                        'appointment' => [
-                            'id' => $consultation->appointment->id,
-                            'status' => $consultation->appointment->status,
-                            'reason' => $consultation->appointment->reason
-                        ],
-                        'doctor' => [
-                            'id' => $consultation->appointment->doctor->id,
-                            'name' => $consultation->appointment->doctor->user->full_name,
-                            'speciality' => $consultation->appointment->doctor->speciality ?? 'General Practitioner'
-                        ]
+                        'id' => $doctor->id,
+                        'name' => $doctor->user->full_name,
+                        'speciality' => $doctor->speciality ?? 'General Practitioner',
+                        'last_appointment' => $lastAppointment ? [
+                            'id' => $lastAppointment->id,
+                            'date' => $lastAppointment->appointment_date->format('M d, Y'),
+                            'reason' => $lastAppointment->reason,
+                            'status' => $lastAppointment->status
+                        ] : null
                     ];
                 });
 
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'consultations' => $consultations,
-                    'count' => $consultations->count()
+                    'doctors' => $doctors,
+                    'count' => $doctors->count()
                 ]
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Failed to fetch unreviewed consultations: ' . $e->getMessage());
+            \Log::error('Failed to fetch doctors to review: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'error' => 'Failed to fetch consultations'
+                'error' => 'Failed to fetch doctors'
             ], 500);
         }
     }
@@ -254,8 +237,8 @@ class ReviewController extends Controller
                 ], 404);
             }
 
-            $reviews = Review::byPatient($patient->id)
-                ->with(['consultation', 'doctor.user'])
+            $reviews = DoctorReview::byPatient($patient->id)
+                ->with(['doctor.user'])
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function($review) {
@@ -268,11 +251,6 @@ class ReviewController extends Controller
                         'stars' => $review->stars,
                         'rating_text' => $review->rating_text,
                         'created_at' => $review->created_at->format('M d, Y at H:i'),
-                        'consultation' => [
-                            'id' => $review->consultation->id,
-                            'date' => $review->consultation->consultation_date->format('M d, Y'),
-                            'diagnosis' => $review->consultation->diagnosis
-                        ],
                         'doctor' => [
                             'id' => $review->doctor->id,
                             'name' => $review->doctor->user->full_name,

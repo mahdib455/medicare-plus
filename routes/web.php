@@ -14436,6 +14436,1266 @@ Route::get('/review-fix-demo', function () {
 </html>';
 });
 
+// Complete Review System Test Page
+Route::get('/review-system-test', function () {
+    return view('review-system-test');
+});
+
+// Complete Review System Demo
+Route::get('/complete-review-system', function () {
+    return '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Review System - MediCare+</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); min-height: 100vh; padding: 2rem 0; }
+        .system-card { background: white; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); max-width: 1400px; margin: 0 auto; }
+        .system-header { background: linear-gradient(135deg, #8b5cf6, #a855f7); color: white; padding: 3rem; border-radius: 20px 20px 0 0; text-align: center; }
+        .feature-card { border: 2px solid #e9ecef; border-radius: 15px; padding: 2rem; margin: 1rem 0; transition: all 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .feature-card.backend { border-color: #ef4444; background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); }
+        .feature-card.frontend { border-color: #3b82f6; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); }
+        .feature-card.security { border-color: #10b981; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); }
+        .system-btn { border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; text-decoration: none; transition: all 0.3s; }
+        .system-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .star-icon { animation: sparkle 2s ease-in-out infinite; }
+        @keyframes sparkle { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.2) rotate(180deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="system-card">
+            <div class="system-header">
+                <div class="d-flex justify-content-center align-items-center mb-3">
+                    <i class="fas fa-star star-icon me-3" style="font-size: 4rem;"></i>
+                    <h1 class="display-3 mb-0">Complete Review System</h1>
+                </div>
+                <p class="lead mb-0">Laravel + React + Sanctum Authentication</p>
+                <div class="mt-3">
+                    <span class="badge bg-light text-purple fs-6">✅ Backend Complete</span>
+                    <span class="badge bg-light text-blue fs-6">✅ Frontend Complete</span>
+                    <span class="badge bg-light text-green fs-6">✅ Security Complete</span>
+                </div>
+            </div>
+
+            <div class="p-5">
+                <!-- Backend Features -->
+                <div class="feature-card backend">
+                    <h4><i class="fas fa-server me-3"></i>Laravel Backend</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>📋 Review Model:</h6>
+                            <ul>
+                                <li><strong>Database:</strong> Complete schema with constraints</li>
+                                <li><strong>Relationships:</strong> Consultation, Doctor, Patient</li>
+                                <li><strong>Validation:</strong> Built-in validation rules</li>
+                                <li><strong>Scopes:</strong> Active, ForDoctor, ByPatient</li>
+                                <li><strong>Accessors:</strong> Stars, RatingText</li>
+                            </ul>
+
+                            <h6>⚙️ ReviewController:</h6>
+                            <ul>
+                                <li><strong>store():</strong> Create reviews with validation</li>
+                                <li><strong>getUnreviewedConsultations():</strong> Fetch available consultations</li>
+                                <li><strong>getPatientReviews():</strong> Get patient\'s reviews</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>🔗 API Routes:</h6>
+                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem;">
+                                POST /api/reviews<br>
+                                <small>Submit new review</small><br><br>
+
+                                GET /api/consultations/unreviewed<br>
+                                <small>Get unreviewed consultations</small><br><br>
+
+                                GET /api/my-reviews<br>
+                                <small>Get patient reviews</small>
+                            </div>
+
+                            <h6>🛡️ Security Features:</h6>
+                            <ul>
+                                <li>Sanctum authentication required</li>
+                                <li>Patient ownership verification</li>
+                                <li>Duplicate review prevention</li>
+                                <li>Input validation & sanitization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frontend Features -->
+                <div class="feature-card frontend">
+                    <h4><i class="fab fa-react me-3"></i>React Frontend</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>⚛️ CreateReview.jsx Component:</h6>
+                            <ul>
+                                <li><strong>Authentication:</strong> Sanctum token handling</li>
+                                <li><strong>User Fetching:</strong> Get authenticated user</li>
+                                <li><strong>Consultation Loading:</strong> Fetch unreviewed consultations</li>
+                                <li><strong>Interactive UI:</strong> Modal-based workflow</li>
+                                <li><strong>Star Rating:</strong> Interactive 5-star system</li>
+                                <li><strong>Form Handling:</strong> Comment & anonymity options</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>🎨 UI Features:</h6>
+                            <ul>
+                                <li><strong>Responsive Design:</strong> Bootstrap 5 styling</li>
+                                <li><strong>Loading States:</strong> Spinners and feedback</li>
+                                <li><strong>Error Handling:</strong> User-friendly messages</li>
+                                <li><strong>Success Feedback:</strong> Confirmation messages</li>
+                                <li><strong>Interactive Elements:</strong> Hover effects, animations</li>
+                            </ul>
+
+                            <h6>🔄 Workflow:</h6>
+                            <ol>
+                                <li>Load user & consultations</li>
+                                <li>Select consultation to review</li>
+                                <li>Rate with stars (1-5)</li>
+                                <li>Add optional comment</li>
+                                <li>Choose anonymity</li>
+                                <li>Submit review</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security & Validation -->
+                <div class="feature-card security">
+                    <h4><i class="fas fa-shield-alt me-3"></i>Security & Validation</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>🔐 Authentication:</h6>
+                            <ul>
+                                <li><strong>Laravel Sanctum:</strong> Token-based auth</li>
+                                <li><strong>CSRF Protection:</strong> Token validation</li>
+                                <li><strong>Patient-Only Access:</strong> Role verification</li>
+                                <li><strong>Session Management:</strong> Secure sessions</li>
+                            </ul>
+
+                            <h6>✅ Validation Rules:</h6>
+                            <ul>
+                                <li><strong>consultation_id:</strong> exists:consultations,id</li>
+                                <li><strong>doctor_id:</strong> required|exists:doctors,id</li>
+                                <li><strong>rating:</strong> required|integer|min:1|max:5</li>
+                                <li><strong>comment:</strong> nullable|string|max:1000</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>🛡️ Business Logic:</h6>
+                            <ul>
+                                <li><strong>Ownership Check:</strong> Patient owns consultation</li>
+                                <li><strong>Duplicate Prevention:</strong> One review per consultation</li>
+                                <li><strong>Doctor Verification:</strong> Doctor exists</li>
+                                <li><strong>Status Management:</strong> Active by default</li>
+                            </ul>
+
+                            <h6>📊 Database Constraints:</h6>
+                            <ul>
+                                <li><strong>Unique Index:</strong> consultation_id + patient_id</li>
+                                <li><strong>Foreign Keys:</strong> Referential integrity</li>
+                                <li><strong>Enum Values:</strong> Status validation</li>
+                                <li><strong>Performance Indexes:</strong> Query optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testing Section -->
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="card border-primary">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0">Test Complete System</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="small">Test the full React + Laravel review system.</p>
+                                <a href="/review-system-test" class="btn btn-outline-primary system-btn w-100">
+                                    <i class="fas fa-vial me-2"></i>Test System
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-success">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0">Patient Dashboard</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="small">Access patient dashboard with review features.</p>
+                                <a href="/patient/dashboard" class="btn btn-outline-success system-btn w-100">
+                                    <i class="fas fa-user me-2"></i>Patient View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-warning">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0">API Testing</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="small">Test API endpoints directly.</p>
+                                <a href="/api/consultations/unreviewed" class="btn btn-outline-warning system-btn w-100" target="_blank">
+                                    <i class="fas fa-api me-2"></i>Test API
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-info">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">Debug Tools</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="small">Access debugging and troubleshooting tools.</p>
+                                <a href="/review-fix-demo" class="btn btn-outline-info system-btn w-100">
+                                    <i class="fas fa-tools me-2"></i>Debug
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Summary -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="alert alert-success border-0" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h4 class="alert-heading"><i class="fas fa-check-circle me-2"></i>Complete Review System Generated!</h4>
+                                    <p class="mb-0">
+                                        <strong>✅ Laravel Backend:</strong> Model, Controller, API routes, validation<br>
+                                        <strong>✅ React Frontend:</strong> CreateReview component with full UI<br>
+                                        <strong>✅ Authentication:</strong> Sanctum-based security<br>
+                                        <strong>✅ Database:</strong> Proper schema with constraints<br>
+                                        <strong>✅ Features:</strong> Rating, comments, anonymity, duplicate prevention
+                                    </p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="d-grid gap-2">
+                                        <a href="/review-system-test" class="btn btn-success btn-lg system-btn">
+                                            <i class="fas fa-star me-2"></i>Test Reviews!
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>';
+});
+
+// Debug Empty Consultations Issue
+Route::get('/debug-empty-consultations', function () {
+    try {
+        // Check what data exists
+        $users = \App\Models\User::where('role', 'patient')->get(['id', 'first_name', 'last_name', 'email']);
+        $patients = \App\Models\Patient::with('user')->get();
+        $doctors = \App\Models\Doctor::with('user')->get();
+        $appointments = \App\Models\Appointment::with(['patient.user', 'doctor.user'])->get();
+        $consultations = \App\Models\Consultation::with(['appointment.patient.user', 'appointment.doctor.user'])->get();
+        $reviews = \App\Models\Review::with(['consultation', 'patient.user', 'doctor.user'])->get();
+
+        // Test the API logic for a specific user
+        $testUserId = 1; // Change this to test different users
+        $testUser = \App\Models\User::find($testUserId);
+        $testPatient = null;
+        $testConsultations = collect();
+
+        if ($testUser && $testUser->role === 'patient') {
+            $testPatient = \App\Models\Patient::where('user_id', $testUser->id)->first();
+
+            if ($testPatient) {
+                // Get consultations that haven't been reviewed yet (same logic as API)
+                $testConsultations = \App\Models\Consultation::whereHas('appointment', function($query) use ($testPatient) {
+                        $query->where('patient_id', $testPatient->id);
+                    })
+                    ->whereDoesntHave('reviews', function($query) use ($testPatient) {
+                        $query->where('patient_id', $testPatient->id);
+                    })
+                    ->with(['appointment.doctor.user'])
+                    ->orderBy('consultation_date', 'desc')
+                    ->get();
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'debug_data' => [
+                'total_counts' => [
+                    'users' => \App\Models\User::count(),
+                    'patient_users' => \App\Models\User::where('role', 'patient')->count(),
+                    'patients' => \App\Models\Patient::count(),
+                    'doctors' => \App\Models\Doctor::count(),
+                    'appointments' => \App\Models\Appointment::count(),
+                    'consultations' => \App\Models\Consultation::count(),
+                    'reviews' => \App\Models\Review::count()
+                ],
+                'patient_users' => $users->map(function($user) {
+                    return [
+                        'id' => $user->id,
+                        'name' => $user->first_name . ' ' . $user->last_name,
+                        'email' => $user->email
+                    ];
+                }),
+                'patients' => $patients->map(function($patient) {
+                    return [
+                        'id' => $patient->id,
+                        'user_id' => $patient->user_id,
+                        'user_name' => $patient->user ? $patient->user->first_name . ' ' . $patient->user->last_name : 'No user'
+                    ];
+                }),
+                'appointments' => $appointments->map(function($apt) {
+                    return [
+                        'id' => $apt->id,
+                        'patient_id' => $apt->patient_id,
+                        'doctor_id' => $apt->doctor_id,
+                        'date' => $apt->appointment_date,
+                        'status' => $apt->status,
+                        'patient_name' => $apt->patient && $apt->patient->user ? $apt->patient->user->first_name . ' ' . $apt->patient->user->last_name : 'Unknown',
+                        'doctor_name' => $apt->doctor && $apt->doctor->user ? $apt->doctor->user->first_name . ' ' . $apt->doctor->user->last_name : 'Unknown'
+                    ];
+                }),
+                'consultations' => $consultations->map(function($cons) {
+                    return [
+                        'id' => $cons->id,
+                        'appointment_id' => $cons->appointment_id,
+                        'date' => $cons->consultation_date,
+                        'diagnosis' => $cons->diagnosis,
+                        'patient_name' => $cons->appointment && $cons->appointment->patient && $cons->appointment->patient->user
+                            ? $cons->appointment->patient->user->first_name . ' ' . $cons->appointment->patient->user->last_name
+                            : 'Unknown',
+                        'doctor_name' => $cons->appointment && $cons->appointment->doctor && $cons->appointment->doctor->user
+                            ? $cons->appointment->doctor->user->first_name . ' ' . $cons->appointment->doctor->user->last_name
+                            : 'Unknown'
+                    ];
+                }),
+                'reviews' => $reviews->map(function($review) {
+                    return [
+                        'id' => $review->id,
+                        'consultation_id' => $review->consultation_id,
+                        'patient_id' => $review->patient_id,
+                        'doctor_id' => $review->doctor_id,
+                        'rating' => $review->rating,
+                        'comment' => $review->comment
+                    ];
+                }),
+                'test_for_user_' . $testUserId => [
+                    'user' => $testUser ? [
+                        'id' => $testUser->id,
+                        'name' => $testUser->first_name . ' ' . $testUser->last_name,
+                        'role' => $testUser->role
+                    ] : null,
+                    'patient' => $testPatient ? [
+                        'id' => $testPatient->id,
+                        'user_id' => $testPatient->user_id
+                    ] : null,
+                    'unreviewed_consultations_count' => $testConsultations->count(),
+                    'unreviewed_consultations' => $testConsultations->map(function($cons) {
+                        return [
+                            'id' => $cons->id,
+                            'date' => $cons->consultation_date,
+                            'diagnosis' => $cons->diagnosis,
+                            'doctor_name' => $cons->appointment->doctor->user->first_name . ' ' . $cons->appointment->doctor->user->last_name
+                        ];
+                    })
+                ]
+            ]
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
+});
+
+// Create Sample Data for Review Testing
+Route::get('/create-sample-data', function () {
+    try {
+        DB::beginTransaction();
+
+        // Create a patient user if none exists
+        $patientUser = \App\Models\User::where('role', 'patient')->first();
+        if (!$patientUser) {
+            $patientUser = \App\Models\User::create([
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'email' => 'patient@test.com',
+                'password' => bcrypt('password'),
+                'role' => 'patient',
+                'phone' => '1234567890',
+                'address' => '123 Test Street',
+                'date_of_birth' => '1990-01-01'
+            ]);
+        }
+
+        // Create patient record
+        $patient = \App\Models\Patient::where('user_id', $patientUser->id)->first();
+        if (!$patient) {
+            $patient = \App\Models\Patient::create([
+                'user_id' => $patientUser->id,
+                'medical_history' => 'No significant medical history',
+                'emergency_contact' => 'Jane Doe - 0987654321'
+            ]);
+        }
+
+        // Create a doctor user if none exists
+        $doctorUser = \App\Models\User::where('role', 'doctor')->first();
+        if (!$doctorUser) {
+            $doctorUser = \App\Models\User::create([
+                'first_name' => 'Dr. Sarah',
+                'last_name' => 'Smith',
+                'email' => 'doctor@test.com',
+                'password' => bcrypt('password'),
+                'role' => 'doctor',
+                'phone' => '1234567891',
+                'address' => '456 Medical Center',
+                'date_of_birth' => '1980-01-01'
+            ]);
+        }
+
+        // Create doctor record
+        $doctor = \App\Models\Doctor::where('user_id', $doctorUser->id)->first();
+        if (!$doctor) {
+            $doctor = \App\Models\Doctor::create([
+                'user_id' => $doctorUser->id,
+                'speciality' => 'General Practitioner',
+                'license_number' => 'DOC123456',
+                'years_of_experience' => 10
+            ]);
+        }
+
+        // Create appointments
+        $appointments = [];
+        for ($i = 1; $i <= 3; $i++) {
+            $appointment = \App\Models\Appointment::create([
+                'patient_id' => $patient->id,
+                'doctor_id' => $doctor->id,
+                'appointment_date' => now()->subDays($i * 7),
+                'reason' => 'Regular checkup ' . $i,
+                'status' => 'completed'
+            ]);
+            $appointments[] = $appointment;
+        }
+
+        // Create consultations for the appointments
+        $consultations = [];
+        foreach ($appointments as $index => $appointment) {
+            $consultation = \App\Models\Consultation::create([
+                'appointment_id' => $appointment->id,
+                'consultation_date' => $appointment->appointment_date->addHour(),
+                'diagnosis' => 'Patient is in good health. Consultation ' . ($index + 1),
+                'treatment' => 'Continue regular exercise and healthy diet',
+                'notes' => 'Patient responded well to treatment recommendations'
+            ]);
+            $consultations[] = $consultation;
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sample data created successfully!',
+            'data' => [
+                'patient_user' => [
+                    'id' => $patientUser->id,
+                    'name' => $patientUser->first_name . ' ' . $patientUser->last_name,
+                    'email' => $patientUser->email
+                ],
+                'patient' => [
+                    'id' => $patient->id,
+                    'user_id' => $patient->user_id
+                ],
+                'doctor_user' => [
+                    'id' => $doctorUser->id,
+                    'name' => $doctorUser->first_name . ' ' . $doctorUser->last_name,
+                    'email' => $doctorUser->email
+                ],
+                'doctor' => [
+                    'id' => $doctor->id,
+                    'speciality' => $doctor->speciality
+                ],
+                'appointments_created' => count($appointments),
+                'consultations_created' => count($consultations),
+                'next_steps' => [
+                    'Login as patient: patient@test.com / password',
+                    'Go to review system test page',
+                    'You should now see consultations to review'
+                ]
+            ]
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollback();
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile())
+        ], 500);
+    }
+});
+
+// Fix Empty Consultations Issue
+Route::get('/fix-empty-consultations', function () {
+    return '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Empty Consultations - MediCare+</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); min-height: 100vh; padding: 2rem 0; }
+        .fix-card { background: white; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); max-width: 1200px; margin: 0 auto; }
+        .fix-header { background: linear-gradient(135deg, #f59e0b, #f97316); color: white; padding: 3rem; border-radius: 20px 20px 0 0; text-align: center; }
+        .step-card { border: 2px solid #fed7aa; border-radius: 15px; padding: 2rem; margin: 1rem 0; background: linear-gradient(135deg, #fffbeb 0%, #fed7aa 100%); }
+        .fix-btn { border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; text-decoration: none; transition: all 0.3s; }
+        .fix-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="fix-card">
+            <div class="fix-header">
+                <div class="d-flex justify-content-center align-items-center mb-3">
+                    <i class="fas fa-exclamation-triangle me-3" style="font-size: 4rem;"></i>
+                    <h1 class="display-3 mb-0">Empty Consultations Fix</h1>
+                </div>
+                <p class="lead mb-0">No consultations available for review? Let\'s fix that!</p>
+            </div>
+
+            <div class="p-5">
+                <!-- Problem Analysis -->
+                <div class="step-card">
+                    <h4><i class="fas fa-search me-3"></i>Problem: No Consultations to Review</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>🔍 Possible Causes:</h6>
+                            <ul>
+                                <li><strong>No Data:</strong> No consultations exist in database</li>
+                                <li><strong>No Patient User:</strong> Not logged in as patient</li>
+                                <li><strong>Already Reviewed:</strong> All consultations already reviewed</li>
+                                <li><strong>Wrong User:</strong> Logged in as doctor/admin instead of patient</li>
+                                <li><strong>Data Relationships:</strong> Broken appointment → consultation links</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>🧪 Debug Steps:</h6>
+                            <ol>
+                                <li>Check if data exists in database</li>
+                                <li>Verify user is logged in as patient</li>
+                                <li>Check consultation → appointment → patient relationships</li>
+                                <li>Verify no existing reviews block consultations</li>
+                                <li>Test API endpoints directly</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Debug -->
+                <div class="step-card">
+                    <h4><i class="fas fa-bug me-3"></i>Step 1: Debug Current State</h4>
+                    <p>First, let\'s see what data exists in your database and identify the issue.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/debug-empty-consultations" class="btn btn-warning fix-btn">
+                            <i class="fas fa-search me-2"></i>Debug Database
+                        </a>
+                        <button class="btn btn-outline-warning" onclick="checkCurrentUser()">
+                            <i class="fas fa-user me-2"></i>Check Current User
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Create Data -->
+                <div class="step-card">
+                    <h4><i class="fas fa-plus me-3"></i>Step 2: Create Sample Data (if needed)</h4>
+                    <p>If no consultations exist, create sample data for testing the review system.</p>
+                    <div class="alert alert-info">
+                        <strong>This will create:</strong>
+                        <ul class="mb-0">
+                            <li>Patient user: patient@test.com / password</li>
+                            <li>Doctor user: doctor@test.com / password</li>
+                            <li>3 completed appointments with consultations</li>
+                            <li>All ready for review testing</li>
+                        </ul>
+                    </div>
+                    <a href="/create-sample-data" class="btn btn-success fix-btn">
+                        <i class="fas fa-database me-2"></i>Create Sample Data
+                    </a>
+                </div>
+
+                <!-- Step 3: Login -->
+                <div class="step-card">
+                    <h4><i class="fas fa-sign-in-alt me-3"></i>Step 3: Login as Patient</h4>
+                    <p>Make sure you\'re logged in as a patient user to access the review system.</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Default Test Credentials:</h6>
+                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; font-family: monospace;">
+                                <strong>Email:</strong> patient@test.com<br>
+                                <strong>Password:</strong> password<br>
+                                <strong>Role:</strong> patient
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-grid gap-2">
+                                <a href="/login" class="btn btn-primary fix-btn">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Go to Login
+                                </a>
+                                <button class="btn btn-outline-primary" onclick="testAuth()">
+                                    <i class="fas fa-shield-alt me-2"></i>Test Authentication
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Test -->
+                <div class="step-card">
+                    <h4><i class="fas fa-vial me-3"></i>Step 4: Test Review System</h4>
+                    <p>Once logged in as a patient with consultations, test the review system.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/review-system-test" class="btn btn-info fix-btn">
+                            <i class="fas fa-star me-2"></i>Test Review System
+                        </a>
+                        <a href="/api/consultations/unreviewed" class="btn btn-outline-info fix-btn" target="_blank">
+                            <i class="fas fa-api me-2"></i>Test API Direct
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card border-primary">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0">Quick Fix</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="small">Create data + login + test in one go.</p>
+                                <button class="btn btn-outline-primary w-100" onclick="quickFix()">
+                                    <i class="fas fa-magic me-2"></i>Quick Fix
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-success">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0">Manual Check</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="small">Check your current login status and data.</p>
+                                <button class="btn btn-outline-success w-100" onclick="manualCheck()">
+                                    <i class="fas fa-clipboard-check me-2"></i>Check Status
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-warning">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0">Reset & Start Over</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="small">Clear and recreate all test data.</p>
+                                <button class="btn btn-outline-warning w-100" onclick="resetData()">
+                                    <i class="fas fa-redo me-2"></i>Reset Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Area -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div id="results" class="alert alert-info" style="display: none;">
+                            <h6>Results:</h6>
+                            <div id="results-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showResults(content) {
+            document.getElementById("results").style.display = "block";
+            document.getElementById("results-content").innerHTML = content;
+        }
+
+        async function checkCurrentUser() {
+            try {
+                const response = await fetch("/api/user");
+                if (response.ok) {
+                    const user = await response.json();
+                    showResults(`<strong>Current User:</strong> ${user.first_name} ${user.last_name} (${user.email}) - Role: ${user.role}`);
+                } else {
+                    showResults("<strong>Not logged in</strong> - Please login as a patient user");
+                }
+            } catch (error) {
+                showResults("<strong>Error:</strong> " + error.message);
+            }
+        }
+
+        async function testAuth() {
+            try {
+                const response = await fetch("/api/consultations/unreviewed");
+                if (response.ok) {
+                    const data = await response.json();
+                    showResults(`<strong>API Test:</strong> Found ${data.data.count} unreviewed consultations`);
+                } else {
+                    showResults("<strong>API Test Failed:</strong> " + response.status + " - " + response.statusText);
+                }
+            } catch (error) {
+                showResults("<strong>API Error:</strong> " + error.message);
+            }
+        }
+
+        async function quickFix() {
+            showResults("Creating sample data...");
+            try {
+                const response = await fetch("/create-sample-data");
+                const data = await response.json();
+                if (data.success) {
+                    showResults(`
+                        <strong>Sample data created!</strong><br>
+                        <strong>Next steps:</strong><br>
+                        1. <a href="/login">Login</a> with: patient@test.com / password<br>
+                        2. Go to <a href="/review-system-test">Review System Test</a><br>
+                        3. You should see ${data.data.consultations_created} consultations to review
+                    `);
+                } else {
+                    showResults("<strong>Error:</strong> " + data.error);
+                }
+            } catch (error) {
+                showResults("<strong>Error:</strong> " + error.message);
+            }
+        }
+
+        async function manualCheck() {
+            try {
+                const response = await fetch("/debug-empty-consultations");
+                const data = await response.json();
+                if (data.success) {
+                    const counts = data.debug_data.total_counts;
+                    showResults(`
+                        <strong>Database Status:</strong><br>
+                        Users: ${counts.users} | Patients: ${counts.patients} | Doctors: ${counts.doctors}<br>
+                        Appointments: ${counts.appointments} | Consultations: ${counts.consultations} | Reviews: ${counts.reviews}<br>
+                        <a href="/debug-empty-consultations" target="_blank">View full debug data</a>
+                    `);
+                } else {
+                    showResults("<strong>Debug Error:</strong> " + data.error);
+                }
+            } catch (error) {
+                showResults("<strong>Error:</strong> " + error.message);
+            }
+        }
+
+        function resetData() {
+            if (confirm("This will recreate sample data. Continue?")) {
+                quickFix();
+            }
+        }
+    </script>
+</body>
+</html>';
+});
+
+// Quick Login for Testing
+Route::get('/quick-login-patient', function () {
+    // Find the patient user
+    $user = \App\Models\User::where('email', 'patient@test.com')->first();
+
+    if ($user) {
+        // Log in the user
+        Auth::login($user);
+
+        return redirect('/review-system-test')->with('success', 'Logged in as patient successfully!');
+    } else {
+        return redirect('/create-sample-data')->with('error', 'Patient user not found. Creating sample data first...');
+    }
+});
+
+// Test Review System with Auto-Login
+Route::get('/test-reviews-now', function () {
+    // Create sample data if it doesn't exist
+    $user = \App\Models\User::where('email', 'patient@test.com')->first();
+
+    if (!$user) {
+        // Create sample data first
+        try {
+            DB::beginTransaction();
+
+            // Create patient user
+            $patientUser = \App\Models\User::create([
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'email' => 'patient@test.com',
+                'password' => bcrypt('password'),
+                'role' => 'patient',
+                'phone' => '1234567890',
+                'address' => '123 Test Street',
+                'date_of_birth' => '1990-01-01'
+            ]);
+
+            // Create patient record
+            $patient = \App\Models\Patient::create([
+                'user_id' => $patientUser->id,
+                'medical_history' => 'No significant medical history',
+                'emergency_contact' => 'Jane Doe - 0987654321'
+            ]);
+
+            // Create doctor user
+            $doctorUser = \App\Models\User::create([
+                'first_name' => 'Dr. Sarah',
+                'last_name' => 'Smith',
+                'email' => 'doctor@test.com',
+                'password' => bcrypt('password'),
+                'role' => 'doctor',
+                'phone' => '1234567891',
+                'address' => '456 Medical Center',
+                'date_of_birth' => '1980-01-01'
+            ]);
+
+            // Create doctor record
+            $doctor = \App\Models\Doctor::create([
+                'user_id' => $doctorUser->id,
+                'speciality' => 'General Practitioner',
+                'license_number' => 'DOC123456',
+                'years_of_experience' => 10
+            ]);
+
+            // Create appointments and consultations
+            for ($i = 1; $i <= 3; $i++) {
+                $appointment = \App\Models\Appointment::create([
+                    'patient_id' => $patient->id,
+                    'doctor_id' => $doctor->id,
+                    'appointment_date' => now()->subDays($i * 7),
+                    'reason' => 'Regular checkup ' . $i,
+                    'status' => 'completed'
+                ]);
+
+                \App\Models\Consultation::create([
+                    'appointment_id' => $appointment->id,
+                    'consultation_date' => $appointment->appointment_date->addHour(),
+                    'diagnosis' => 'Patient is in good health. Consultation ' . $i,
+                    'treatment' => 'Continue regular exercise and healthy diet',
+                    'notes' => 'Patient responded well to treatment recommendations'
+                ]);
+            }
+
+            DB::commit();
+            $user = $patientUser;
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'Failed to create sample data: ' . $e->getMessage()], 500);
+        }
+    }
+
+    // Log in the patient user
+    Auth::login($user);
+
+    // Redirect to review system test
+    return redirect('/review-system-test')->with('success', 'Sample data created and logged in successfully! You should now see consultations to review.');
+});
+
+// Review System Status Check
+Route::get('/review-status', function () {
+    $user = Auth::user();
+    $consultationsCount = 0;
+    $reviewsCount = 0;
+    $patientInfo = null;
+
+    if ($user && $user->role === 'patient') {
+        $patient = \App\Models\Patient::where('user_id', $user->id)->first();
+        if ($patient) {
+            $patientInfo = $patient;
+
+            // Get unreviewed consultations count
+            $consultationsCount = \App\Models\Consultation::whereHas('appointment', function($query) use ($patient) {
+                    $query->where('patient_id', $patient->id);
+                })
+                ->whereDoesntHave('reviews', function($query) use ($patient) {
+                    $query->where('patient_id', $patient->id);
+                })
+                ->count();
+
+            // Get reviews count
+            $reviewsCount = \App\Models\Review::where('patient_id', $patient->id)->count();
+        }
+    }
+
+    return response()->json([
+        'success' => true,
+        'status' => [
+            'logged_in' => !!$user,
+            'user' => $user ? [
+                'id' => $user->id,
+                'name' => $user->first_name . ' ' . $user->last_name,
+                'email' => $user->email,
+                'role' => $user->role
+            ] : null,
+            'is_patient' => $user && $user->role === 'patient',
+            'patient_record' => $patientInfo ? [
+                'id' => $patientInfo->id,
+                'user_id' => $patientInfo->user_id
+            ] : null,
+            'unreviewed_consultations' => $consultationsCount,
+            'total_reviews' => $reviewsCount,
+            'ready_for_reviews' => $user && $user->role === 'patient' && $consultationsCount > 0
+        ],
+        'next_steps' => $consultationsCount > 0
+            ? ['Go to /review-system-test to submit reviews']
+            : ($user && $user->role === 'patient'
+                ? ['No consultations available for review']
+                : ['Login as patient first: /test-reviews-now'])
+    ]);
+});
+
+// Doctor Review System Test Page
+Route::get('/doctor-review-test', function () {
+    return view('doctor-review-test');
+});
+
+// Debug Doctor Review System
+Route::get('/debug-doctor-reviews', function () {
+    try {
+        // Test with user ID 1 (change this to test different users)
+        $testUserId = 1;
+        $user = \App\Models\User::find($testUserId);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found', 'user_id' => $testUserId]);
+        }
+
+        // Get patient record
+        $patient = \App\Models\Patient::where('user_id', $user->id)->first();
+
+        if (!$patient) {
+            return response()->json(['error' => 'Patient record not found for user', 'user' => $user]);
+        }
+
+        // Get all doctors
+        $allDoctors = \App\Models\Doctor::with('user')->get();
+
+        // Get appointments for this patient
+        $appointments = \App\Models\Appointment::where('patient_id', $patient->id)
+            ->with(['doctor.user'])
+            ->get();
+
+        // Get unique doctors from appointments
+        $doctorsFromAppointments = $appointments->pluck('doctor')->unique('id');
+
+        // Get existing doctor reviews by this patient
+        $existingReviews = \App\Models\DoctorReview::where('patient_id', $patient->id)
+            ->with(['doctor.user'])
+            ->get();
+
+        // Get doctors that can be reviewed (have appointments but no reviews)
+        $reviewableDoctors = \App\Models\Doctor::whereHas('appointments', function($query) use ($patient) {
+                $query->where('patient_id', $patient->id);
+            })
+            ->whereDoesntHave('doctorReviews', function($query) use ($patient) {
+                $query->where('patient_id', $patient->id);
+            })
+            ->with(['user', 'appointments' => function($query) use ($patient) {
+                $query->where('patient_id', $patient->id)
+                      ->orderBy('appointment_date', 'desc')
+                      ->limit(1);
+            }])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'debug_info' => [
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->first_name . ' ' . $user->last_name,
+                    'email' => $user->email,
+                    'role' => $user->role
+                ],
+                'patient' => [
+                    'id' => $patient->id,
+                    'user_id' => $patient->user_id
+                ],
+                'total_doctors' => $allDoctors->count(),
+                'all_doctors' => $allDoctors->map(function($doctor) {
+                    return [
+                        'id' => $doctor->id,
+                        'name' => $doctor->user->first_name . ' ' . $doctor->user->last_name,
+                        'speciality' => $doctor->speciality
+                    ];
+                }),
+                'patient_appointments' => $appointments->count(),
+                'appointments' => $appointments->map(function($apt) {
+                    return [
+                        'id' => $apt->id,
+                        'doctor_id' => $apt->doctor_id,
+                        'doctor_name' => $apt->doctor->user->first_name . ' ' . $apt->doctor->user->last_name,
+                        'date' => $apt->appointment_date,
+                        'status' => $apt->status
+                    ];
+                }),
+                'doctors_from_appointments' => $doctorsFromAppointments->map(function($doctor) {
+                    return [
+                        'id' => $doctor->id,
+                        'name' => $doctor->user->first_name . ' ' . $doctor->user->last_name,
+                        'speciality' => $doctor->speciality
+                    ];
+                }),
+                'existing_reviews' => $existingReviews->count(),
+                'reviews' => $existingReviews->map(function($review) {
+                    return [
+                        'id' => $review->id,
+                        'doctor_id' => $review->doctor_id,
+                        'doctor_name' => $review->doctor->user->first_name . ' ' . $review->doctor->user->last_name,
+                        'rating' => $review->rating,
+                        'comment' => $review->comment
+                    ];
+                }),
+                'reviewable_doctors_count' => $reviewableDoctors->count(),
+                'reviewable_doctors' => $reviewableDoctors->map(function($doctor) {
+                    $lastAppointment = $doctor->appointments->first();
+                    return [
+                        'id' => $doctor->id,
+                        'name' => $doctor->user->first_name . ' ' . $doctor->user->last_name,
+                        'speciality' => $doctor->speciality ?? 'General Practitioner',
+                        'last_appointment' => $lastAppointment ? [
+                            'id' => $lastAppointment->id,
+                            'date' => $lastAppointment->appointment_date->format('M d, Y'),
+                            'reason' => $lastAppointment->reason,
+                            'status' => $lastAppointment->status
+                        ] : null
+                    ];
+                })
+            ]
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
+});
+
+// Test Doctor Review API Directly
+Route::get('/test-doctor-review-api', function () {
+    try {
+        // Get the first patient and doctor
+        $patient = \App\Models\Patient::with('user')->first();
+        $doctor = \App\Models\Doctor::with('user')->first();
+
+        if (!$patient || !$doctor) {
+            return response()->json(['error' => 'Need at least one patient and one doctor']);
+        }
+
+        // Check if appointment exists
+        $appointment = \App\Models\Appointment::where('patient_id', $patient->id)
+            ->where('doctor_id', $doctor->id)
+            ->first();
+
+        if (!$appointment) {
+            // Create an appointment
+            $appointment = \App\Models\Appointment::create([
+                'patient_id' => $patient->id,
+                'doctor_id' => $doctor->id,
+                'appointment_date' => now()->subDays(7),
+                'reason' => 'Test appointment for review',
+                'status' => 'completed'
+            ]);
+        }
+
+        // Check if review already exists
+        $existingReview = \App\Models\DoctorReview::where('patient_id', $patient->id)
+            ->where('doctor_id', $doctor->id)
+            ->first();
+
+        if ($existingReview) {
+            return response()->json([
+                'message' => 'Review already exists',
+                'review' => $existingReview,
+                'patient' => $patient->user->first_name . ' ' . $patient->user->last_name,
+                'doctor' => $doctor->user->first_name . ' ' . $doctor->user->last_name
+            ]);
+        }
+
+        // Create a test review
+        $review = \App\Models\DoctorReview::create([
+            'doctor_id' => $doctor->id,
+            'patient_id' => $patient->id,
+            'rating' => 5,
+            'comment' => 'Excellent doctor! Very professional and caring.',
+            'is_anonymous' => false,
+            'status' => 'active'
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Test doctor review created successfully!',
+            'review' => $review,
+            'patient' => $patient->user->first_name . ' ' . $patient->user->last_name,
+            'doctor' => $doctor->user->first_name . ' ' . $doctor->user->last_name,
+            'appointment' => $appointment
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile())
+        ], 500);
+    }
+});
+
+// Fix Doctor Review Logic - Create More Sample Data
+Route::get('/fix-doctor-review-data', function () {
+    try {
+        DB::beginTransaction();
+
+        // Get or create patient
+        $patientUser = \App\Models\User::where('email', 'patient@test.com')->first();
+        if (!$patientUser) {
+            $patientUser = \App\Models\User::create([
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'email' => 'patient@test.com',
+                'password' => bcrypt('password'),
+                'role' => 'patient',
+                'phone' => '1234567890',
+                'address' => '123 Test Street',
+                'date_of_birth' => '1990-01-01'
+            ]);
+        }
+
+        $patient = \App\Models\Patient::where('user_id', $patientUser->id)->first();
+        if (!$patient) {
+            $patient = \App\Models\Patient::create([
+                'user_id' => $patientUser->id,
+                'medical_history' => 'No significant medical history',
+                'emergency_contact' => 'Jane Doe - 0987654321'
+            ]);
+        }
+
+        // Create multiple doctors
+        $doctors = [];
+        $doctorData = [
+            ['Dr. Sarah', 'Smith', 'Cardiology'],
+            ['Dr. Michael', 'Johnson', 'Dermatology'],
+            ['Dr. Emily', 'Brown', 'General Practitioner']
+        ];
+
+        foreach ($doctorData as $index => $data) {
+            $email = 'doctor' . ($index + 1) . '@test.com';
+            $doctorUser = \App\Models\User::where('email', $email)->first();
+
+            if (!$doctorUser) {
+                $doctorUser = \App\Models\User::create([
+                    'first_name' => $data[0],
+                    'last_name' => $data[1],
+                    'email' => $email,
+                    'password' => bcrypt('password'),
+                    'role' => 'doctor',
+                    'phone' => '123456789' . $index,
+                    'address' => '456 Medical Center ' . $index,
+                    'date_of_birth' => '1980-01-01'
+                ]);
+            }
+
+            $doctor = \App\Models\Doctor::where('user_id', $doctorUser->id)->first();
+            if (!$doctor) {
+                $doctor = \App\Models\Doctor::create([
+                    'user_id' => $doctorUser->id,
+                    'speciality' => $data[2],
+                    'license_number' => 'DOC12345' . $index,
+                    'years_of_experience' => 10 + $index
+                ]);
+            }
+
+            $doctors[] = $doctor;
+
+            // Create appointment with this doctor
+            $existingAppointment = \App\Models\Appointment::where('patient_id', $patient->id)
+                ->where('doctor_id', $doctor->id)
+                ->first();
+
+            if (!$existingAppointment) {
+                \App\Models\Appointment::create([
+                    'patient_id' => $patient->id,
+                    'doctor_id' => $doctor->id,
+                    'appointment_date' => now()->subDays(($index + 1) * 10),
+                    'reason' => 'Consultation with ' . $data[2] . ' specialist',
+                    'status' => 'completed'
+                ]);
+            }
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Doctor review data fixed!',
+            'data' => [
+                'patient' => [
+                    'id' => $patient->id,
+                    'name' => $patientUser->first_name . ' ' . $patientUser->last_name,
+                    'email' => $patientUser->email
+                ],
+                'doctors_created' => count($doctors),
+                'doctors' => array_map(function($doctor) {
+                    return [
+                        'id' => $doctor->id,
+                        'name' => $doctor->user->first_name . ' ' . $doctor->user->last_name,
+                        'speciality' => $doctor->speciality
+                    ];
+                }, $doctors),
+                'next_steps' => [
+                    'Login as: patient@test.com / password',
+                    'Go to: /doctor-review-test',
+                    'You should see ' . count($doctors) . ' doctors to review'
+                ]
+            ]
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollback();
+        return response()->json([
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile())
+        ], 500);
+    }
+});
+
 // Simple test route for Mahdi
 Route::get('/mahdi-test', function () {
     try {

@@ -54,6 +54,8 @@ import { createRoot } from 'react-dom/client';
 import PatientDashboard from './components/PatientDashboard';
 import DoctorDashboard from './components/DoctorDashboard';
 import ReviewSystem from './components/ReviewSystem';
+import CreateReview from './components/CreateReview';
+import ReviewDoctor from './components/ReviewDoctor';
 
 // Initialize React components when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -76,5 +78,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (reviewSystemElement) {
         const root = createRoot(reviewSystemElement);
         root.render(<ReviewSystem />);
+    }
+
+    // Create Review React Component
+    const createReviewElement = document.getElementById('create-review-react');
+    if (createReviewElement) {
+        const root = createRoot(createReviewElement);
+        root.render(<CreateReview />);
+    }
+
+    // Review Doctor React Component
+    const reviewDoctorElement = document.getElementById('review-doctor-react');
+    if (reviewDoctorElement) {
+        const root = createRoot(reviewDoctorElement);
+        root.render(<ReviewDoctor />);
     }
 });

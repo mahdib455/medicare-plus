@@ -85,6 +85,14 @@ class Consultation extends Model
     }
 
     /**
+     * Get the reviews for this consultation.
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'consultation_id');
+    }
+
+    /**
      * Scope a query to only include consultations from today.
      */
     public function scopeToday($query)

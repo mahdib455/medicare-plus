@@ -22,6 +22,30 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Review System API Routes - Only for authenticated patients
+Route::middleware('auth:sanctum')->group(function () {
+    // Store a new review
+    Route::post('/reviews', [App\Http\Controllers\ReviewController::class, 'store']);
+
+    // Get consultations without reviews for the authenticated patient
+    Route::get('/consultations/unreviewed', [App\Http\Controllers\ReviewController::class, 'getUnreviewedConsultations']);
+
+    // Get reviews by authenticated patient
+    Route::get('/my-reviews', [App\Http\Controllers\ReviewController::class, 'getPatientReviews']);
+});
+
+// Doctor Review System API Routes - Simpler logic
+Route::middleware('auth:sanctum')->group(function () {
+    // Store a new doctor review
+    Route::post('/doctor-reviews', [App\Http\Controllers\DoctorReviewController::class, 'store']);
+
+    // Get doctors that can be reviewed by the authenticated patient
+    Route::get('/doctors/reviewable', [App\Http\Controllers\DoctorReviewController::class, 'getDoctorsToReview']);
+
+    // Get doctor reviews by authenticated patient
+    Route::get('/my-doctor-reviews', [App\Http\Controllers\DoctorReviewController::class, 'getPatientReviews']);
+});
+
 // Review System API Routes
 Route::middleware('auth:sanctum')->group(function () {
     // Store a new review

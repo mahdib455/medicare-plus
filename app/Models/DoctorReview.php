@@ -5,9 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Review extends Model
+class DoctorReview extends Model
 {
     use HasFactory;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'doctor_reviews';
 
     /**
      * The attributes that are mass assignable.
@@ -15,7 +22,6 @@ class Review extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'consultation_id',
         'doctor_id',
         'patient_id',
         'rating',
@@ -30,7 +36,6 @@ class Review extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'consultation_id' => 'integer',
         'doctor_id' => 'integer',
         'patient_id' => 'integer',
         'rating' => 'integer',
@@ -50,12 +55,11 @@ class Review extends Model
     ];
 
     /**
-     * Validation rules for creating a review
+     * Validation rules for creating a doctor review
      */
     public static function validationRules()
     {
         return [
-            'consultation_id' => 'required|exists:consultations,id',
             'doctor_id' => 'required|exists:doctors,id',
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string|max:1000',
@@ -64,15 +68,7 @@ class Review extends Model
     }
 
     /**
-     * Relationship: Review belongs to Consultation
-     */
-    public function consultation()
-    {
-        return $this->belongsTo(Consultation::class, 'consultation_id');
-    }
-
-    /**
-     * Relationship: Review belongs to Doctor
+     * Relationship: DoctorReview belongs to Doctor
      */
     public function doctor()
     {
@@ -80,7 +76,7 @@ class Review extends Model
     }
 
     /**
-     * Relationship: Review belongs to Patient
+     * Relationship: DoctorReview belongs to Patient
      */
     public function patient()
     {
