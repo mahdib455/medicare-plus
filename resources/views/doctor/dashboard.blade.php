@@ -33,6 +33,8 @@
             border-radius: 20px 20px 0 0;
             margin-top: 2rem;
             box-shadow: var(--card-shadow);
+            position: relative;
+            z-index: 1;
         }
 
         .header-section {
@@ -41,7 +43,7 @@
             padding: 2rem;
             border-radius: 20px 20px 0 0;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .header-section::before {
@@ -206,6 +208,61 @@
             opacity: 0.5;
         }
 
+        /* Dropdown Menu Fixes */
+        .dropdown-menu {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            padding: 0.5rem 0;
+            min-width: 200px;
+            z-index: 9999 !important;
+            margin-top: 0.5rem;
+            position: absolute !important;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1.25rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+            color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .dropdown-divider {
+            margin: 0.5rem 0;
+            border-color: #e2e8f0;
+        }
+
+        /* Ensure dropdown appears above other content */
+        .header-section {
+            position: relative;
+            z-index: 1000;
+        }
+
+        .header-section .dropdown {
+            position: static;
+        }
+
+        .header-section .dropdown .dropdown-menu {
+            z-index: 9999 !important;
+        }
+
+        /* Fix for dropdown positioning */
+        .dropdown-menu-end {
+            right: 0 !important;
+            left: auto !important;
+        }
+
         @media (max-width: 768px) {
             .main-container {
                 margin-top: 0;
@@ -221,6 +278,16 @@
                 font-size: 0.875rem;
                 padding: 0.4rem 0.8rem;
             }
+
+            .dropdown-menu {
+                min-width: 180px;
+                margin-top: 0.25rem;
+            }
+
+            .dropdown-item {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
         }
     </style>
 </head>
@@ -230,7 +297,10 @@
         <div class="header-section">
             <div class="container-fluid">
                 <div class="row align-items-center">
-                    <div class="col-md-8">
+                    <div class="col-md-1">
+                        <x-logo size="small" :showText="false" class="justify-content-start" />
+                    </div>
+                    <div class="col-md-7">
                         <div class="doctor-info">
                             <h1 class="mb-2">
                                 <i class="fas fa-stethoscope me-3"></i>
@@ -254,12 +324,12 @@
                                     <i class="fas fa-user-circle me-2"></i>Menu
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-edit me-2"></i>Mon Profil</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-calendar-alt me-2"></i>Planning</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-chart-bar me-2"></i>Statistiques</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('doctor.profile') }}"><i class="fas fa-user-edit me-2"></i>My Profile</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('doctor.planning') }}"><i class="fas fa-calendar-alt me-2"></i>Schedule</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('doctor.consultations') }}"><i class="fas fa-notes-medical me-2"></i>My Consultations</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('doctor.statistics') }}"><i class="fas fa-chart-bar me-2"></i>Statistics</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Paramètres</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a></li>
+                                    <li><a class="dropdown-item text-danger" href="{{ route('logout.get') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -704,32 +774,20 @@
         // Fonction pour ouvrir le modal de prescription
         async function openPrescriptionModal(appointmentId) {
             try {
-                // Récupérer les détails du rendez-vous
-                const response = await axios.get(`/api/appointments/doctor/{{ $doctor->id }}`);
-                const appointment = response.data.appointments.find(apt => apt.id === appointmentId);
+                // Vérifier s'il y a une consultation pour ce rendez-vous
+                const consultationResponse = await axios.get(`/api/consultations/appointment/${appointmentId}`);
 
-                if (appointment) {
-                    currentAppointmentData = appointment;
-
-                    // Pré-remplir le formulaire
-                    document.getElementById('prescriptionAppointmentId').value = appointmentId;
-                    document.getElementById('prescriptionPatientId').value = appointment.patient.id;
-                    document.getElementById('prescribedAt').value = new Date().toISOString().slice(0, 16);
-
-                    // Réinitialiser les lignes de médicaments
-                    document.getElementById('medicationLines').innerHTML = '';
-                    medicationLineCounter = 0;
-
-                    // Ajouter une première ligne
-                    addMedicationLine();
-
-                    // Ouvrir le modal
-                    const modal = new bootstrap.Modal(document.getElementById('prescriptionModal'));
-                    modal.show();
+                if (consultationResponse.data.success && consultationResponse.data.consultations.length > 0) {
+                    // Il y a une consultation, rediriger vers la page de création de prescription
+                    const consultation = consultationResponse.data.consultations[0];
+                    window.location.href = `/doctor/prescriptions/create/${consultation.id}`;
+                } else {
+                    // Pas de consultation, afficher un message d'erreur
+                    alert('You must complete a consultation before creating a prescription.');
                 }
             } catch (error) {
-                console.error('Erreur:', error);
-                alert('Erreur lors de l\'ouverture du modal de prescription');
+                console.error('Error:', error);
+                alert('Error checking consultation status. Please complete a consultation first.');
             }
         }
 
@@ -964,6 +1022,29 @@
         document.getElementById('submitConsultation').addEventListener('click', submitConsultation);
         document.getElementById('submitPrescription').addEventListener('click', submitPrescription);
         document.getElementById('addMedicationLine').addEventListener('click', addMedicationLine);
+
+        // Fix dropdown positioning on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure all dropdowns have proper positioning
+            const dropdowns = document.querySelectorAll('.dropdown-toggle');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    // Force dropdown to stay within viewport
+                    setTimeout(() => {
+                        const dropdownMenu = this.nextElementSibling;
+                        if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+                            const rect = dropdownMenu.getBoundingClientRect();
+                            const viewportHeight = window.innerHeight;
+
+                            // If dropdown goes below viewport, adjust position
+                            if (rect.bottom > viewportHeight) {
+                                dropdownMenu.style.transform = `translateY(-${rect.height + 10}px)`;
+                            }
+                        }
+                    }, 10);
+                });
+            });
+        });
     </script>
 </body>
 </html>

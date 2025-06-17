@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -30,27 +31,53 @@ class AuthController extends Controller
         // Find user by email
         $user = User::where('email', $request->email)->first();
 
-        // Simple password comparison (no hashing)
-        if ($user && $user->password === $request->password) {
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['User not found with this email address.'],
+            ]);
+        }
+
+        // Check password - support both hashed and plain text passwords
+        $passwordMatch = false;
+
+        // First try hashed password (for admin users)
+        if (Hash::check($request->password, $user->password)) {
+            $passwordMatch = true;
+        }
+        // Fallback to plain text comparison (for existing users)
+        elseif ($user->password === $request->password) {
+            $passwordMatch = true;
+        }
+
+        if ($passwordMatch) {
             // Login the user manually
             Auth::login($user);
 
             // Regenerate session to prevent session fixation
             $request->session()->regenerate();
 
-            // Role-based redirection
-            if ($user->isDoctor()) {
-                return redirect()->intended('/doctor/dashboard');
+            // Smart redirection based on user type
+
+            // Check if user has admin profile (admin inherits from users table)
+            if ($user->admin) {
+                // Update admin login statistics
+                $user->admin->updateLoginStats();
+                // Redirect to admin dashboard
+                return redirect()->intended('/admin/dashboard')->with('success', 'Welcome Administrator ' . $user->full_name . '!');
+            }
+            // Role-based redirection for regular users
+            elseif ($user->isDoctor()) {
+                return redirect()->intended('/doctor/dashboard')->with('success', 'Welcome Dr. ' . $user->full_name . '!');
             } elseif ($user->isPatient()) {
-                return redirect()->intended('/patient/dashboard');
+                return redirect()->intended('/patient/dashboard')->with('success', 'Welcome ' . $user->full_name . '!');
             }
 
-            // Default fallback (shouldn't happen with proper role validation)
-            return redirect()->intended('/dashboard');
+            // Default fallback
+            return redirect()->intended('/dashboard')->with('success', 'Welcome ' . $user->full_name . '!');
         }
 
         throw ValidationException::withMessages([
-            'email' => ['Les informations d\'identification fournies ne correspondent pas à nos enregistrements.'],
+            'email' => ['The provided credentials do not match our records.'],
         ]);
     }
 
@@ -86,9 +113,16 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:500',
-            'role' => 'required|in:doctor,patient',
+            'role' => 'required|in:doctor,patient', // Admin not allowed in registration
             'password' => 'required|string|min:8|confirmed',
         ]);
+
+        // Prevent admin role creation through registration
+        if ($request->role === 'admin') {
+            throw ValidationException::withMessages([
+                'role' => ['Admin accounts cannot be created through registration.'],
+            ]);
+        }
 
         $user = User::create([
             'first_name' => $request->first_name,
@@ -97,7 +131,7 @@ class AuthController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'role' => $request->role,
-            'password' => $request->password, // Pas de hachage
+            'password' => $request->password, // Plain text password for compatibility
         ]);
 
         Auth::login($user);

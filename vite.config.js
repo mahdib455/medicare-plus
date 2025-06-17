@@ -7,10 +7,25 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/sass/app.scss',
-                'resources/js/app.js',
+                'resources/js/app.jsx',
             ],
             refresh: true,
         }),
-        react(),
+        react({
+            include: "**/*.{jsx,tsx}",
+        }),
     ],
+    esbuild: {
+        loader: "jsx",
+        include: /.*\.jsx?$/,
+        exclude: [],
+    },
+    optimizeDeps: {
+        esbuildOptions: {
+            loader: {
+                '.js': 'jsx',
+                '.jsx': 'jsx',
+            },
+        },
+    },
 });

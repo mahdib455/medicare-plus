@@ -60,33 +60,61 @@ class AppointmentController extends Controller
      */
     public function store(Request $request)
     {
-        // Pas de vérification d'authentification
+        // Vérification d'authentification pour les patients
+        $currentUser = auth()->user();
+
+        if (!$currentUser) {
+            return response()->json([
+                'error' => 'Authentication required. Please login first.'
+            ], 401);
+        }
+
+        // Vérifier que l'utilisateur est un patient
+        if (!$currentUser->isPatient()) {
+            return response()->json([
+                'error' => 'Only patients can book appointments.'
+            ], 403);
+        }
+
+        $patient = $currentUser->patient;
+
+        if (!$patient) {
+            return response()->json([
+                'error' => 'Patient profile not found.'
+            ], 404);
+        }
 
         $request->validate([
-            'patient_id' => 'required|exists:patients,id',
             'doctor_id' => 'required|exists:doctors,id',
-            'appointment_date' => 'required|date',
+            'appointment_date' => 'required|date|after:now',
             'reason' => 'nullable|string|max:1000',
         ]);
 
+        // Utiliser l'ID du patient connecté au lieu de celui envoyé dans la requête
         $appointment = Appointment::create([
-            'patient_id' => $request->patient_id,
+            'patient_id' => $patient->id, // ID du patient connecté
             'doctor_id' => $request->doctor_id,
             'appointment_date' => $request->appointment_date,
             'status' => Appointment::STATUS_PENDING,
             'reason' => $request->reason,
         ]);
 
-        $appointment->load(['doctor.user']);
+        $appointment->load(['doctor.user', 'patient.user']);
 
         return response()->json([
             'message' => 'Demande de rendez-vous créée avec succès',
             'appointment' => [
                 'id' => $appointment->id,
                 'appointment_date' => $appointment->appointment_date->format('Y-m-d H:i'),
+                'appointment_date_formatted' => $appointment->appointment_date->format('d/m/Y à H:i'),
                 'status' => $appointment->status,
                 'status_label' => $appointment->status_label,
                 'reason' => $appointment->reason,
+                'patient' => [
+                    'id' => $appointment->patient->id,
+                    'name' => $appointment->patient->user->full_name,
+                    'email' => $appointment->patient->user->email,
+                ],
                 'doctor' => [
                     'id' => $appointment->doctor->id,
                     'name' => $appointment->doctor->user->full_name,
@@ -95,6 +123,48 @@ class AppointmentController extends Controller
                 ]
             ]
         ], 201);
+    }
+
+    /**
+     * Get appointments for a specific patient.
+     */
+    public function getAppointmentsByPatient($patientId)
+    {
+        $appointments = Appointment::where('patient_id', $patientId)
+            ->with(['patient.user', 'doctor.user', 'consultation', 'prescriptions'])
+            ->orderBy('appointment_date', 'desc')
+            ->get();
+
+        return response()->json([
+            'appointments' => $appointments->map(function ($appointment) {
+                return [
+                    'id' => $appointment->id,
+                    'appointment_date' => $appointment->appointment_date->format('Y-m-d H:i'),
+                    'appointment_date_formatted' => $appointment->appointment_date->format('d/m/Y à H:i'),
+                    'status' => $appointment->status,
+                    'status_label' => $appointment->status_label,
+                    'status_badge_color' => $appointment->status_badge_color,
+                    'reason' => $appointment->reason,
+                    'has_consultation' => $appointment->consultation ? true : false,
+                    'prescriptions_count' => $appointment->prescriptions->count(),
+                    'doctor' => $appointment->doctor ? [
+                        'id' => $appointment->doctor->id,
+                        'name' => $appointment->doctor->user->full_name,
+                        'speciality' => $appointment->doctor->speciality,
+                        'hospital' => $appointment->doctor->hospital,
+                        'email' => $appointment->doctor->user->email,
+                        'phone' => $appointment->doctor->user->phone,
+                    ] : null,
+                    'patient' => $appointment->patient ? [
+                        'id' => $appointment->patient->id,
+                        'name' => $appointment->patient->user->full_name,
+                        'email' => $appointment->patient->user->email,
+                        'phone' => $appointment->patient->user->phone,
+                        'address' => $appointment->patient->user->address,
+                    ] : null,
+                ];
+            })
+        ]);
     }
 
     /**

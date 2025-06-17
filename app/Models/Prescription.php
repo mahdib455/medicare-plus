@@ -10,6 +10,20 @@ class Prescription extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'prescriptions';
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = true;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -20,7 +34,7 @@ class Prescription extends Model
         'patient_id',
         'prescribed_at',
         'notes',
-        'status', // draft, active, completed, cancelled
+        'status',
     ];
 
     /**

@@ -10,6 +10,20 @@ class PrescriptionLine extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'prescription_lines';
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = true;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -17,10 +31,10 @@ class PrescriptionLine extends Model
     protected $fillable = [
         'prescription_id',
         'medication_id',
+        'quantity',
         'dosage',
         'frequency',
         'duration_days',
-        'quantity',
         'instructions',
         'start_date',
         'end_date',
@@ -35,8 +49,8 @@ class PrescriptionLine extends Model
     protected $casts = [
         'prescription_id' => 'integer',
         'medication_id' => 'integer',
-        'duration_days' => 'integer',
         'quantity' => 'integer',
+        'duration_days' => 'integer',
         'start_date' => 'date',
         'end_date' => 'date',
     ];

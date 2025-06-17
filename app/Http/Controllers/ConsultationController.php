@@ -87,8 +87,9 @@ class ConsultationController extends Controller
             'notes' => $request->notes,
         ]);
 
-        // Marquer le rendez-vous comme terminé
-        $appointment->update(['status' => Appointment::STATUS_COMPLETED]);
+        // Ne pas marquer le rendez-vous comme terminé automatiquement
+        // Le statut sera mis à "completed" seulement quand une prescription est créée
+        // $appointment->update(['status' => Appointment::STATUS_COMPLETED]);
 
         $consultation->load(['appointment.patient.user', 'appointment.doctor.user']);
 

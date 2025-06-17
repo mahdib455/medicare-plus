@@ -10,6 +10,20 @@ class Consultation extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'consultations';
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = true;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -18,6 +32,7 @@ class Consultation extends Model
         'appointment_id',
         'consultation_date',
         'diagnosis',
+        'treatment',
         'notes',
     ];
 

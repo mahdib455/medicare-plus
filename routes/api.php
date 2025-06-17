@@ -22,12 +22,103 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Appointment Routes (No Authentication)
+// Review System API Routes
+Route::middleware('auth:sanctum')->group(function () {
+    // Store a new review
+    Route::post('/reviews', [App\Http\Controllers\NewReviewController::class, 'store']);
+
+    // Get reviews for a specific doctor
+    Route::get('/doctors/{doctorId}/reviews', [App\Http\Controllers\NewReviewController::class, 'getDoctorReviews']);
+
+    // Get reviews by authenticated patient
+    Route::get('/my-reviews', [App\Http\Controllers\NewReviewController::class, 'getPatientReviews']);
+
+    // Get consultations for review (from old ReviewController)
+    Route::get('/all-consultations', [App\Http\Controllers\ReviewController::class, 'getAllConsultations']);
+    Route::get('/my-reviews-old', [App\Http\Controllers\ReviewController::class, 'getMyReviews']);
+    Route::post('/consultation-reviews', [App\Http\Controllers\ReviewController::class, 'storeConsultationReview']);
+});
+
+// Test consultation API without auth (temporary)
+Route::get('/test-consultations/{userId}', function ($userId) {
+    try {
+        // Simulate logged-in user
+        $user = \App\Models\User::find($userId);
+        if (!$user || $user->role !== 'patient') {
+            return response()->json(['error' => 'User not found or not a patient'], 404);
+        }
+
+        // Get patient record
+        $patient = \App\Models\Patient::where('user_id', $user->id)->first();
+        if (!$patient) {
+            return response()->json(['error' => 'No patient record found'], 404);
+        }
+
+        // Get all consultations for this patient through appointments
+        $consultations = \App\Models\Consultation::whereHas('appointment', function($query) use ($patient) {
+                $query->where('patient_id', $patient->id);
+            })
+            ->with(['appointment.doctor.user', 'appointment.prescription'])
+            ->orderBy('consultation_date', 'desc')
+            ->get()
+            ->map(function($consultation) use ($patient) {
+                // Check if this consultation has been reviewed
+                $review = \App\Models\Review::where('consultation_id', $consultation->id)
+                    ->where('patient_id', $patient->id)
+                    ->first();
+
+                return [
+                    'id' => $consultation->id,
+                    'consultation_date' => $consultation->consultation_date->format('m/d/Y'),
+                    'consultation_time' => $consultation->consultation_date->format('H:i'),
+                    'formatted_date' => $consultation->consultation_date->format('m/d/Y at H:i'),
+                    'diagnosis' => $consultation->diagnosis,
+                    'treatment' => $consultation->treatment ?? 'No treatment specified',
+                    'notes' => $consultation->notes,
+                    'appointment' => [
+                        'id' => $consultation->appointment->id,
+                        'status' => $consultation->appointment->status,
+                        'reason' => $consultation->appointment->reason
+                    ],
+                    'doctor' => [
+                        'id' => $consultation->appointment->doctor->id,
+                        'name' => $consultation->appointment->doctor->user->full_name,
+                        'speciality' => $consultation->appointment->doctor->speciality ?? 'General Practitioner'
+                    ],
+                    'has_prescription' => $consultation->appointment->prescription ? true : false,
+                    'is_reviewed' => $review ? true : false,
+                    'review' => $review ? [
+                        'id' => $review->id,
+                        'rating' => $review->rating,
+                        'comment' => $review->comment,
+                        'created_at' => $review->created_at->format('m/d/Y at H:i')
+                    ] : null
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'consultations' => $consultations
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile())
+        ], 500);
+    }
+});
+
+// Appointment Routes (Mixed Authentication)
 Route::get('/appointments', [AppointmentController::class, 'index']);
 Route::get('/appointments/doctor/{doctorId}', [AppointmentController::class, 'getAppointmentsByDoctor']);
-Route::post('/appointments', [AppointmentController::class, 'store']);
+Route::get('/appointments/patient/{patientId}', [AppointmentController::class, 'getAppointmentsByPatient']);
 Route::patch('/appointments/{appointment}/status', [AppointmentController::class, 'updateStatus']);
 Route::get('/doctors', [AppointmentController::class, 'getDoctors']);
+
+// Note: Appointment creation moved to web routes for better session handling
 
 // Consultation Routes (No Authentication)
 Route::get('/consultations', [ConsultationController::class, 'index']);
@@ -36,6 +127,23 @@ Route::put('/consultations/{consultation}', [ConsultationController::class, 'upd
 Route::delete('/consultations/{consultation}', [ConsultationController::class, 'destroy']);
 Route::get('/consultations/doctor/{doctorId}', [ConsultationController::class, 'getConsultationsByDoctor']);
 Route::get('/consultations/patient/{patientId}', [ConsultationController::class, 'getConsultationsByPatient']);
+Route::get('/consultations/appointment/{appointmentId}', function ($appointmentId) {
+    try {
+        $consultations = \App\Models\Consultation::where('appointment_id', $appointmentId)
+            ->with(['appointment.patient.user', 'appointment.doctor.user'])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'consultations' => $consultations
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
 
 // Prescription Routes (No Authentication)
 Route::get('/prescriptions', [PrescriptionController::class, 'index']);

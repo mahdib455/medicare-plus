@@ -10,25 +10,29 @@ class Medication extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'medications';
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = true;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
         'name',
-        'generic_name',
-        'brand_name',
         'description',
-        'category',
-        'unit',
-        'strength',
-        'form', // tablet, capsule, syrup, injection, etc.
-        'manufacturer',
-        'active_ingredient',
-        'contraindications',
+        'dosage',
         'side_effects',
-        'storage_conditions',
-        'is_active',
     ];
 
     /**

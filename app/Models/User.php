@@ -15,6 +15,7 @@ class User extends Authenticatable
     /**
      * The possible values for the role enum.
      */
+    const ROLE_ADMIN = 'admin';
     const ROLE_DOCTOR = 'doctor';
     const ROLE_PATIENT = 'patient';
 
@@ -83,6 +84,22 @@ class User extends Authenticatable
     public function isPatient()
     {
         return $this->role === self::ROLE_PATIENT;
+    }
+
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin()
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    /**
+     * Get the admin profile associated with the user.
+     */
+    public function admin()
+    {
+        return $this->hasOne(Admin::class);
     }
 
     /**

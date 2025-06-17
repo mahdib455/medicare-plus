@@ -251,3 +251,36 @@ window.axios.interceptors.response.use(
  */
 
 import './components/Example';
+
+// React Components Import
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+
+// Import React components
+import PatientDashboard from './components/PatientDashboard';
+import DoctorDashboard from './components/DoctorDashboard';
+import ReviewSystem from './components/ReviewSystem';
+
+// Initialize React components when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Patient Dashboard React Component
+    const patientDashboardElement = document.getElementById('patient-dashboard-react');
+    if (patientDashboardElement) {
+        const root = createRoot(patientDashboardElement);
+        root.render(<PatientDashboard />);
+    }
+
+    // Doctor Dashboard React Component
+    const doctorDashboardElement = document.getElementById('doctor-dashboard-react');
+    if (doctorDashboardElement) {
+        const root = createRoot(doctorDashboardElement);
+        root.render(<DoctorDashboard />);
+    }
+
+    // Review System React Component
+    const reviewSystemElement = document.getElementById('review-system-react');
+    if (reviewSystemElement) {
+        const root = createRoot(reviewSystemElement);
+        root.render(<ReviewSystem />);
+    }
+});
